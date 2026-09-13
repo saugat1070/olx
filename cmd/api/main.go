@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -23,7 +24,15 @@ func main() {
 	// @description: adding default http DefaultServeMux can cause script injection on our server
 	// so we use mux from http package instead of default ServeMux
 
-	err := http.ListenAndServe(":8000", nil)
+	// http server struct
+	server := http.Server{
+		Addr:         ":8000",
+		Handler:      mux,
+		ReadTimeout:  time.Second * 10,
+		WriteTimeout: time.Second * 10,
+		IdleTimeout:  time.Second * 60,
+	}
+	err := server.ListenAndServe() // using mux instead of nill (default ServeMux), it only allow our defined route
 	if err != nil {
 		log.Fatalf("Error occured while running server: %s", err)
 	}

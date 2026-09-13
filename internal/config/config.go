@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -23,7 +24,9 @@ func MustLoadConfig() Config {
 	// 	panic("PORT is required")
 	// }
 	env := os.Getenv("ENV")
-	if env != "" {
+	log.Printf("PORT: %s", port)
+	log.Printf("Server Running in %s mode", env)
+	if env == "" {
 		panic("ENV is required")
 	}
 	return Config{

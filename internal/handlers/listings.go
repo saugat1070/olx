@@ -21,7 +21,7 @@ func Listing(db *sql.DB) http.HandlerFunc { // Closure factory
 	return func(w http.ResponseWriter, r *http.Request) {
 		rows, err := db.Query(
 			`
-			SELECT * FROM listings
+			SELECT id, title, description, price, city, created_at FROM listings
 			ORDER BY created_at DESC
 			LIMIT 100
 			`)

@@ -33,8 +33,16 @@ func main() {
 
 	case "down":
 		// log.Println("migrate down called")
-		if err := m.Down(); err != nil {
-			log.Fatalf("migrate.down: %v", err)
+		// if err := m.Down(); err != nil {
+		// 	log.Fatalf("migrate.down: %v", err)
+		// }
+		/*
+			@description:
+			@m.Steps(-1): It is used to roll back multiple steps. If the value is -1, it will rollback one step
+			@m.Down(): It is used to rollback all the steps
+		*/
+		if err := m.Steps(-1); err != nil {
+			log.Fatalf("migrate.steps: %v", err)
 		}
 	default:
 		log.Fatalf("unknown command: %s", os.Args[1])

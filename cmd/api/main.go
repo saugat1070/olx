@@ -12,12 +12,13 @@ import (
 
 func main() {
 	cfg := config.MustLoadConfig()
-	_, errordb := db.Connect(cfg.DB_URL)
+	db, errordb := db.Connect(cfg.DB_URL)
 	if errordb != nil {
 		log.Fatalf("main.db.connect: %v", errordb)
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", handlers.Health)
+	mux.HandleFunc("GET /listing", handlers.Listing(db))
 
 	// http server struct
 	server := http.Server{

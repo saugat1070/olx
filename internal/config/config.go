@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	PORT string
-	Env  string
+	PORT   string
+	Env    string
+	DB_URL string
 }
 
 /*
@@ -24,13 +25,13 @@ func MustLoadConfig() Config {
 	// 	panic("PORT is required")
 	// }
 	env := os.Getenv("ENV")
-	log.Printf("PORT: %s", port)
 	log.Printf("Server Running in %s mode", env)
 	if env == "" {
 		panic("ENV is required")
 	}
 	return Config{
-		PORT: port,
-		Env:  env,
+		PORT:   port,
+		Env:    env,
+		DB_URL: os.Getenv("DATABASE_URL"),
 	}
 }

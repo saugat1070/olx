@@ -6,6 +6,12 @@ build:
 run:build
 	@./bin/api
 
+migrate-up:
+	@go run ./cmd/migrate/main.go up
+
+migrate-down:
+	@go run ./cmd/migrate/main.go down
+
 # if we use @ before any command, it will not print the command itself
 
 # run: build # this means run will depend on build, first execute build then run

@@ -7,6 +7,11 @@ import (
 )
 
 func main() {
+
+	http.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("okay")) // conversion from string to byte
+	})
+
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Fatalf("Error occured while running server: %s", err)

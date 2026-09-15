@@ -7,6 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
+type ctxKey int
+
+const (
+	requestIDKey ctxKey = iota
+)
+
 const (
 	requestId = "X-Request-ID"
 )
@@ -19,8 +25,12 @@ func RequestId(next http.Handler) http.Handler {
 		}
 
 		w.Header().Add(requestId, id)
-		ctx := context.WithValue(r.Context(), "requestCtxId", id)
+		ctx := context.WithValue(r.Context(), requestIDKey, id)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func GetRequestID(ctx context.Context) string {
+	return ctx.Value(requestIDKey).(string)
 }

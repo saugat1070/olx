@@ -93,7 +93,7 @@ func (lh *ListingHandler) RemoveListing(w http.ResponseWriter, r *http.Request) 
 func (lh *ListingHandler) CreateList(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	requestId := middleware.GetRequestID(ctx)
-	var req listing
+	var req CreateListingRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		lh.logger.Error("failed to decode", "request_id: ", requestId, "error: ", err.Error())
 		httpx.Error(w, http.StatusBadRequest, "please provide proper listing", httpx.CodeMalformedJSON, "")
@@ -108,7 +108,7 @@ func (lh *ListingHandler) CreateList(w http.ResponseWriter, r *http.Request) {
 	`,
 		req.Title, req.Description, req.Price, req.City)
 
-	if err := row.Scan(&req.ID); err != nil {
+	if err := row.Scan(); err != nil {
 		lh.logger.Error("failed to insert", "request_id: ", requestId, "error: ", err.Error())
 		http.Error(w, "failed to create listing", http.StatusInternalServerError)
 		return

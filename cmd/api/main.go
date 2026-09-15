@@ -10,6 +10,7 @@ import (
 	"github.com/saugat1070/olx-api/internal/config"
 	"github.com/saugat1070/olx-api/internal/db"
 	"github.com/saugat1070/olx-api/internal/handlers"
+	"github.com/saugat1070/olx-api/internal/middleware"
 )
 
 func main() {
@@ -32,14 +33,17 @@ func main() {
 	lh := handlers.NewListingHandler(db, logger)
 
 	mux := http.NewServeMux()
+	// middleware for request id
 	mux.HandleFunc("GET /healthz", handlers.Health)
 	mux.HandleFunc("GET /listing", lh.Listing)
 	mux.HandleFunc("DELETE /listing/{id}", lh.RemoveListing)
 
+	handler := middleware.RequestId(mux)
+
 	// http server struct
 	server := http.Server{
 		Addr:         ":" + cfg.PORT,
-		Handler:      mux,
+		Handler:      handler,
 		ReadTimeout:  time.Second * 10,
 		WriteTimeout: time.Second * 30,
 		IdleTimeout:  time.Second * 60,

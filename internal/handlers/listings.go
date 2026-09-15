@@ -79,7 +79,7 @@ func (lh *ListingHandler) RemoveListing(w http.ResponseWriter, r *http.Request) 
 		id)
 
 	if err != nil {
-		slog.Error("Error on executing delete opertion in listinghandler", "listing_id: ", id, "error:", err.Error())
+		lh.logger.Error("Error on executing delete opertion in listinghandler", "listing_id: ", id, "request-id: ", ctx.Value("X-Request-ID"), "error:", err.Error())
 		http.Error(w, "internal Server Error", http.StatusInternalServerError)
 		return
 	}

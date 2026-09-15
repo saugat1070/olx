@@ -28,10 +28,10 @@ func (req *CreateListingRequest) Validate() error {
 			Message: "must not be empty",
 		}
 	}
-	if strings.TrimSpace(req.Description) == "" {
+	if len(strings.TrimSpace(req.Description)) > 500 {
 		return &ValidationError{
 			Field:   "description",
-			Message: "must not be empty",
+			Message: "must be at most 500 characters long",
 		}
 	}
 	if req.Price <= 0 {

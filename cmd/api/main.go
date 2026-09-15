@@ -16,10 +16,13 @@ func main() {
 	if errordb != nil {
 		log.Fatalf("main.db.connect: %v", errordb)
 	}
+
+	lh := handlers.NewListingHandler(db)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", handlers.Health)
-	mux.HandleFunc("GET /listing", handlers.Listing(db))
-	mux.HandleFunc("DELETE /listing/{id}", nil)
+	mux.HandleFunc("GET /listing", lh.Listing)
+	mux.HandleFunc("DELETE /listing/{id}", lh.RemoveListing)
 
 	// http server struct
 	server := http.Server{
@@ -31,6 +34,7 @@ func main() {
 	}
 	log.Printf("server is listening on %s", cfg.PORT)
 	err := server.ListenAndServe()
+
 	if err != nil {
 		panic(err)
 	}

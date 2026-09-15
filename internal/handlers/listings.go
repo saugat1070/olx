@@ -6,6 +6,9 @@ import (
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/saugat1070/olx-api/internal/httpx"
+	"github.com/saugat1070/olx-api/internal/middleware"
 )
 
 type listing struct {
@@ -85,4 +88,37 @@ func (lh *ListingHandler) RemoveListing(w http.ResponseWriter, r *http.Request) 
 	}
 	w.WriteHeader(http.StatusNoContent)
 	json.NewEncoder(w).Encode(`{"status:"list delete successfully""}`)
+}
+
+func (lh *ListingHandler) CreateList(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	requestId := middleware.GetRequestID(ctx)
+	var req listing
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		lh.logger.Error("failed to decode", "request_id: ", requestId, "error: ", err.Error())
+		httpx.Error(w, http.StatusBadRequest, "please provide proper listing", httpx.CodeMalformedJSON, "")
+		return
+	}
+
+	row := lh.db.QueryRowContext(ctx,
+		`
+		INSERT INTO listings (title,description,price,city) 
+		VALUES ($1,$2,$3,$4)
+		RETURNING id
+	`,
+		req.Title, req.Description, req.Price, req.City)
+
+	if err := row.Scan(&req.ID); err != nil {
+		lh.logger.Error("failed to insert", "request_id: ", requestId, "error: ", err.Error())
+		http.Error(w, "failed to create listing", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]any{
+		"status":  "success",
+		"message": "listing created successfully",
+		"data":    req,
+	})
 }

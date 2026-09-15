@@ -1,0 +1,35 @@
+{
+  "error": {
+    "code": "not_found",
+    "message": "listing not found"
+  },
+  "metadata": {
+    "x-request-id": "[ENCRYPTION_KEY]",
+    "timestamp": "2026-09-16T00:16:33.764773591+05:45"
+  }
+}
+
+
+
+
+
+{
+  "code": "not_found",
+  "message": "listing not found"
+}
+
+
+400 - bad request -> validation, invalid id,
+
+
+
+HTTP statuscode     Custom code
+400                 invalid_id
+404                 not_found
+500                 internal_error
+400                 malformed_json
+422                 validation_failed
+401                 unauthenticated
+403                 forbidden
+409                 conflict
+429                 rate_limited

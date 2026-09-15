@@ -54,3 +54,23 @@ func Listing(db *sql.DB) http.HandlerFunc { // Closure factory
 
 	}
 }
+
+func RemoveListing(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+
+		_, err := db.Exec(
+			`
+			DELETE FROM listings WHERE id = $1
+			`,
+			id)
+		if err != nil {
+			log.Printf("db.Exec: %v", err)
+			http.Error(w, "internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+		json.NewEncoder(w).Encode(`{"status:"list delete successfully""}`)
+
+	}
+}

@@ -19,6 +19,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", handlers.Health)
 	mux.HandleFunc("GET /listing", handlers.Listing(db))
+	mux.HandleFunc("DELETE /listing/{id}", nil)
 
 	// http server struct
 	server := http.Server{

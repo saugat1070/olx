@@ -1,0 +1,12 @@
+{
+  "time": "2026-09-16T00:16:33.764773591+05:45",
+  "level": "ERROR",
+  "source": {
+    "function": "github.com/saugat1070/olx-api/internal/handlers.(*ListingHandler).RemoveListing",
+    "file": "/home/saugat/Desktop/go-project/internal/handlers/listings.go",
+    "line": 81
+  },
+  "msg": "Error on executing delete opertion in listinghandler",
+  "listing_id: ": "b616f3c4-9386-4387-b55e-c00e03513ba8",
+  "error:": "ERROR: relation \"list\" does not exist (SQLSTATE 42P01)"
+}

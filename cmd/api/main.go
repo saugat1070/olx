@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/saugat1070/olx-api/internal/config"
@@ -18,6 +20,16 @@ func main() {
 	}
 
 	lh := handlers.NewListingHandler(db)
+
+	// logger setup
+
+	loggerHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level:     slog.LevelInfo,
+		AddSource: true,
+	})
+
+	logger := slog.New(loggerHandler)
+	slog.SetDefault(logger)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", handlers.Health)

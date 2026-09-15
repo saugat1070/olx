@@ -19,8 +19,6 @@ func main() {
 		log.Fatalf("main.db.connect: %v", errordb)
 	}
 
-	lh := handlers.NewListingHandler(db)
-
 	// logger setup
 
 	loggerHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
@@ -30,6 +28,8 @@ func main() {
 
 	logger := slog.New(loggerHandler)
 	slog.SetDefault(logger)
+
+	lh := handlers.NewListingHandler(db, logger)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", handlers.Health)

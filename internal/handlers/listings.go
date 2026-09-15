@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -19,13 +18,15 @@ type listing struct {
 }
 
 type ListingHandler struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
 // constructor function for Listinghandler
-func NewListingHandler(db *sql.DB) *ListingHandler {
+func NewListingHandler(db *sql.DB, logger *slog.Logger) *ListingHandler {
 	return &ListingHandler{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
@@ -40,7 +41,7 @@ func (lh *ListingHandler) Listing(w http.ResponseWriter, r *http.Request) {
 			LIMIT 100
 			`)
 	if err != nil {
-		log.Printf("Query: %v", err)
+		lh.logger.Error("Error in sql.Query in list handler", "error: ", err.Error())
 		http.Error(w, "internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -50,14 +51,14 @@ func (lh *ListingHandler) Listing(w http.ResponseWriter, r *http.Request) {
 		var list listing
 		err := rows.Scan(&list.ID, &list.Title, &list.Description, &list.Price, &list.City, &list.CreatedAt)
 		if err != nil {
-			log.Printf("rows.Scan: %v", err)
+			lh.logger.Error("Error in sql.Rows in list handler", "error: ", err.Error())
 			http.Error(w, "internal Server Error", http.StatusInternalServerError)
 			return
 		}
 		listings = append(listings, list)
 	}
 	if err := rows.Err(); err != nil {
-		log.Printf("rows.Err: %v", err)
+		lh.logger.Error("Error in sql.Rows in list handler", "error: ", err.Error())
 		http.Error(w, "internal Server Error", http.StatusInternalServerError)
 		return
 	}

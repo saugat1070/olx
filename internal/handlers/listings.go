@@ -30,7 +30,9 @@ func NewListingHandler(db *sql.DB) *ListingHandler {
 
 // lh -> method receiver from listinghandler struct
 func (lh *ListingHandler) Listing(w http.ResponseWriter, r *http.Request) {
-	rows, err := lh.db.Query(
+	// Request context
+	ctx := r.Context()
+	rows, err := lh.db.QueryContext(ctx,
 		`
 			SELECT id, title, description, price, city, created_at FROM listings
 			ORDER BY created_at DESC
@@ -65,9 +67,10 @@ func (lh *ListingHandler) Listing(w http.ResponseWriter, r *http.Request) {
 }
 
 func (lh *ListingHandler) RemoveListing(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	id := r.PathValue("id")
 
-	_, err := lh.db.Exec(
+	_, err := lh.db.ExecContext(ctx,
 		`
 			DELETE FROM listings WHERE id = $1
 			`,
@@ -79,5 +82,4 @@ func (lh *ListingHandler) RemoveListing(w http.ResponseWriter, r *http.Request) 
 	}
 	w.WriteHeader(http.StatusNoContent)
 	json.NewEncoder(w).Encode(`{"status:"list delete successfully""}`)
-
 }

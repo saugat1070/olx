@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -97,6 +98,13 @@ func (lh *ListingHandler) CreateList(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		lh.logger.Error("failed to decode", "request_id: ", requestId, "error: ", err.Error())
 		httpx.Error(w, http.StatusBadRequest, "please provide proper listing", httpx.CodeMalformedJSON, "")
+		return
+	}
+
+	if err := req.Validate(); err != nil {
+		var varr *ValidationError
+		errors.As(err, &varr) // it will check if the error is of the type ValidationError and if it is it will extract the value
+		httpx.Error(w, http.StatusUnprocessableEntity, err.Error(), httpx.CodeValidationFailed, varr.Field)
 		return
 	}
 

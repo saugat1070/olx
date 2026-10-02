@@ -8,9 +8,10 @@ import (
 )
 
 type Config struct {
-	PORT   string
-	Env    string
-	DB_URL string
+	PORT           string
+	Env            string
+	DB_URL         string
+	JWT_SECRET_KEY string
 }
 
 /*
@@ -30,8 +31,9 @@ func MustLoadConfig() Config {
 		panic("ENV is required")
 	}
 	return Config{
-		PORT:   port,
-		Env:    env,
-		DB_URL: os.Getenv("DATABASE_URL"),
+		PORT:           port,
+		Env:            env,
+		DB_URL:         os.Getenv("DATABASE_URL"),
+		JWT_SECRET_KEY: os.Getenv("JWT_SECRET_KEY"),
 	}
 }

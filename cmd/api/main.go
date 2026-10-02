@@ -31,6 +31,7 @@ func main() {
 	slog.SetDefault(logger)
 
 	lh := handlers.NewListingHandler(db, logger)
+	auth := handlers.NewAuthenticationHandler(cfg, db, logger)
 
 	mux := http.NewServeMux()
 	// middleware for request id
@@ -38,6 +39,9 @@ func main() {
 	mux.HandleFunc("GET /listing", lh.Listing)
 	mux.HandleFunc("POST /listing", lh.CreateList)
 	mux.HandleFunc("DELETE /listing/{id}", lh.RemoveListing)
+
+	mux.HandleFunc("POST /auth/signup", auth.CreateUser)
+	mux.HandleFunc("POST /auth/login", auth.LoginUser)
 
 	handler := middleware.RequestId(mux)
 
